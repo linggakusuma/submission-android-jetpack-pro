@@ -9,9 +9,7 @@
             name="viewModel"
             type="com.example.submissionandroidjetpack.ui.movie.MovieViewModel" />
 
-        <variable
-            name="remoteDataSource"
-            type="com.example.submissionandroidjetpack.data.source.remote.RemoteDataSource" />
+        <import type="android.view.View" />
 
     </data>
 
@@ -38,7 +36,7 @@
             android:layout_height="wrap_content"
             android:foregroundGravity="center"
             android:theme="@style/RatingBar"
-            android:visibility="@{viewModel.loading}"
+            android:visibility="@{viewModel.movie.size() > 0 ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/recyclerViewMovie"
             app:layout_constraintStart_toStartOf="parent"

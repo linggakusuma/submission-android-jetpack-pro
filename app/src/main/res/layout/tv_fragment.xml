@@ -8,6 +8,8 @@
         <variable
             name="viewModel"
             type="com.example.submissionandroidjetpack.ui.tv.TvViewModel" />
+
+        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -33,7 +35,7 @@
             android:layout_height="wrap_content"
             android:foregroundGravity="center"
             android:theme="@style/RatingBar"
-            android:visibility="@{viewModel.loading}"
+            android:visibility="@{viewModel.tv.size() > 0 ? View.GONE : View.VISIBLE }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/recyclerViewTv"
             app:layout_constraintStart_toStartOf="parent"
