@@ -2,7 +2,6 @@ package com.example.submissionandroidjetpack.data.source.remote
 
 import com.example.submissionandroidjetpack.data.source.remote.network.MovieApiService
 import com.example.submissionandroidjetpack.data.source.remote.response.MovieResponse
-import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class RemoteDataSource @Inject constructor(private val movieApiService: MovieApiService) {

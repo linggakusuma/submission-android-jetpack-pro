@@ -6,9 +6,6 @@ import androidx.lifecycle.Observer
 import com.example.submissionandroidjetpack.data.source.MovieRepository
 import com.example.submissionandroidjetpack.data.source.remote.response.Movie
 import com.example.submissionandroidjetpack.utils.DataDummy
-import com.nhaarman.mockitokotlin2.verify
-import kotlinx.coroutines.*
-import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -18,16 +15,14 @@ import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 
 
-@RunWith(MockitoJUnitRunner::class)
+@RunWith(MockitoJUnitRunner.Silent::class)
 class MovieViewModelTest {
 
-    @ObsoleteCoroutinesApi
-    private val mainThreadSurrogate = newSingleThreadContext("UI thread")
-
-    private lateinit var movieViewModel: MovieViewModel
+    private var movieViewModel: MovieViewModel? = null
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
+
 
     @Mock
     private lateinit var movieRepository: MovieRepository
@@ -36,28 +31,20 @@ class MovieViewModelTest {
     private lateinit var observer: Observer<List<Movie>>
 
 
-    @ObsoleteCoroutinesApi
-    @ExperimentalCoroutinesApi
     @Before
     fun setUp() {
-        Dispatchers.setMain(mainThreadSurrogate)
         movieViewModel = MovieViewModel(movieRepository)
     }
 
     @Test
     fun getTestMovie() {
-        runBlocking {
-            launch(Dispatchers.Main) {
-                val dummyMovie = DataDummy.generateDummyMovie()
-                val movie = MutableLiveData<List<Movie>>()
-                movie.value = dummyMovie
 
-                Mockito.`when`(movieRepository.getAllMovie()).thenReturn(movie)
-                Mockito.verify<MovieRepository>(movieRepository).getAllMovie()
+        val dummyMovie = DataDummy.generateDummyMovie()
+        val movie = MutableLiveData<List<Movie>>()
+        movie.value = dummyMovie
+        Mockito.`when`(movieRepository.getAllMovie()).thenReturn(movie)
+        movieViewModel?.movie?.observeForever(observer)
+        Mockito.verify<MovieRepository>(movieRepository).getAllMovie()
 
-                movieViewModel.movie.observeForever(observer)
-                verify(observer).onChanged(dummyMovie)
-            }
-        }
     }
 }
