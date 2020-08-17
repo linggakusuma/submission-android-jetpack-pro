@@ -1,6 +1,8 @@
 package com.example.submissionandroidjetpack.di.module
 
 import com.example.submissionandroidjetpack.BuildConfig
+import com.example.submissionandroidjetpack.data.source.MovieRepository
+import com.example.submissionandroidjetpack.data.source.remote.RemoteDataSource
 import com.example.submissionandroidjetpack.data.source.remote.network.MovieApiService
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
@@ -11,7 +13,6 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -75,6 +76,15 @@ class NetworkModule {
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .client(okHttpClient)
         .build()
+
+    @Singleton
+    @Provides
+    fun providesRemoteDataSource(movieApiService: MovieApiService) =
+        RemoteDataSource(movieApiService)
+
+    @Singleton
+    @Provides
+    fun provideMovieRepository(remoteDataSource: RemoteDataSource) = MovieRepository(remoteDataSource)
 
     @Provides
     @Singleton

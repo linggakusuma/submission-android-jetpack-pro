@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.submissionandroidjetpack.data.source.remote.response.Movie
 import com.example.submissionandroidjetpack.databinding.MovieFragmentBinding
 import com.example.submissionandroidjetpack.ui.ViewPagerFragmentDirections
+import com.example.submissionandroidjetpack.utils.ext.observe
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -19,6 +21,10 @@ class MovieFragment : DaggerFragment() {
 
     private val viewModel by viewModels<MovieViewModel> { viewModelFactory }
 
+    private val adapter by lazy { MovieAdapter(MovieAdapter.OnClickListener { navigateToDetail(it) }) }
+
+    private lateinit var binding: MovieFragmentBinding
+
     companion object {
         fun newInstance() =
             MovieFragment()
@@ -28,18 +34,34 @@ class MovieFragment : DaggerFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = MovieFragmentBinding.inflate(inflater).apply {
-            viewModel = this@MovieFragment.viewModel
+        binding = MovieFragmentBinding.inflate(inflater).apply {
             lifecycleOwner = this@MovieFragment
-            recyclerViewMovie.adapter = MovieAdapter(MovieAdapter.OnClickListener {
-                findNavController().navigate(
-                    ViewPagerFragmentDirections.actionViewPagerFragmentToDetailMovieFragment(
-                        it,
-                        it.title.toString()
-                    )
-                )
-            })
+            recyclerViewMovie.adapter = adapter
         }
         return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        subscribeUi()
+    }
+
+    private fun navigateToDetail(movie: Movie) {
+        findNavController().navigate(
+            ViewPagerFragmentDirections.actionViewPagerFragmentToDetailMovieFragment(
+                movie,
+                movie.title.toString()
+            )
+        )
+    }
+
+    private fun subscribeUi() {
+        observe(viewModel.movie) {
+            adapter.apply {
+                submitList(it)
+                notifyDataSetChanged()
+                binding.progressBar.visibility = View.GONE
+            }
+        }
     }
 }
