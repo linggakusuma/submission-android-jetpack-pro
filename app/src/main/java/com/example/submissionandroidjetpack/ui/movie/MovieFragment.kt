@@ -1,6 +1,7 @@
 package com.example.submissionandroidjetpack.ui.movie
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,6 +58,7 @@ class MovieFragment : DaggerFragment() {
 
     private fun subscribeUi() {
         observe(viewModel.movie) {
+            Log.d("cekmovie", it.toString())
             adapter.apply {
                 submitList(it)
                 notifyDataSetChanged()
