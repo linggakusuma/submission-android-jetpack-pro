@@ -8,4 +8,5 @@ class MovieViewModel @Inject constructor(movieRepository: MovieRepository) :
     ViewModel() {
 
     val movie = movieRepository.getAllMovie()
+
 }
